@@ -88,8 +88,8 @@
       <div id="progressBar" class="progress-bar"></div>
     </div>
     <div class="timer" id="timer">Time Remaining: Loading...</div>
-    <button onclick="connectPhantom()">Connect Phantom</button>
-    <button onclick="buyNow()">Buy 1 SOL</button>
+    <button onclick="connectPhantom()">Phantom Wallet verbinden</button>
+    <button onclick="buyNow()">1 SOL kaufen</button>
   </div>
 
   <script>
@@ -127,28 +127,33 @@
     setInterval(updateTimer, 1000);
     updateUI();
 
+    function isPhantomInstalled() {
+      return window.solana && window.solana.isPhantom;
+    }
+
     async function connectPhantom() {
-      if (window.solana && window.solana.isPhantom) {
-        try {
-          const response = await window.solana.connect();
-          alert("Connected to Phantom: " + response.publicKey.toString());
-        } catch (err) {
-          console.error(err);
-          alert("Connection failed.");
-        }
-      } else {
-        alert("Phantom Wallet not found. Please install Phantom extension.");
+      if (!isPhantomInstalled()) {
+        alert("Phantom Wallet ist nicht installiert. Bitte installiere sie über https://phantom.app");
+        return;
+      }
+
+      try {
+        const resp = await window.solana.connect({ onlyIfTrusted: false });
+        alert("Phantom verbunden: " + resp.publicKey.toString());
+      } catch (err) {
+        console.error("Fehler bei Wallet-Verbindung:", err);
+        alert("Verbindung abgebrochen oder fehlgeschlagen.");
       }
     }
 
     async function buyNow() {
       if (!window.solana || !window.solana.publicKey) {
-        alert("Please connect your Phantom Wallet first.");
+        alert("Bitte verbinde zuerst deine Phantom Wallet.");
         return;
       }
 
       if (Date.now() > presaleEnd) {
-        alert("Presale is over.");
+        alert("Presale ist beendet.");
         return;
       }
 
@@ -165,16 +170,28 @@
       );
 
       try {
-        const signed = await window.solana.signAndSendTransaction(transaction);
-        await connection.confirmTransaction(signed.signature);
-        alert("Transaction successful!");
+        const { signature } = await window.solana.signAndSendTransaction(transaction);
+        await connection.confirmTransaction(signature);
+        alert("Transaktion erfolgreich!");
         totalSolRaised += 1;
         updateUI();
       } catch (err) {
         console.error(err);
-        alert("Transaction failed!");
+        alert("Transaktion fehlgeschlagen!");
       }
     }
+
+    window.addEventListener("load", () => {
+      if (isPhantomInstalled()) {
+        window.solana.on("connect", () => {
+          console.log("Verbunden mit:", window.solana.publicKey.toString());
+        });
+
+        window.solana.on("disconnect", () => {
+          console.log("Wallet getrennt.");
+        });
+      }
+    });
   </script>
 </body>
 </html>
