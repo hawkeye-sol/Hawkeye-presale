@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hawkeye Presale</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.32.0/dist/web3.min.js"></script> <!-- Solana Web3.js -->
   <style>
     body {
@@ -88,7 +87,7 @@
   <script>
     let totalSolRaised = 0;
     const presaleGoal = 100; // Total SOL goal for presale
-    const presaleEndTime = Date.now() + 10 * 60 * 1000; // 10-minute countdown
+    const presaleEndTime = new Date('2025-05-01T00:00:00Z').getTime(); // Timer ends on 1st May 2025
 
     // Update the progress bar based on total SOL raised
     function updateProgressBar() {
@@ -105,45 +104,5 @@
         document.getElementById("timer").innerText = "Presale Ended";
       } else {
         let minutes = Math.floor(remainingTime / 60000);
-        let seconds = Math.floor((remainingTime % 60000) / 1000);
-        document.getElementById("timer").innerText = `Time Remaining: ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-      }
-    }
-
-    // Start countdown timer
-    let timerInterval = setInterval(updateTimer, 1000);
-
-    // Connect to Phantom Wallet
-    async function connectPhantom() {
-      if (typeof window.solana !== 'undefined') {
-        try {
-          const resp = await window.solana.connect();
-          alert('Connected to Phantom: ' + resp.publicKey.toString());
-        } catch (err) {
-          console.error(err);
-          alert('Error connecting to Phantom.');
-        }
-      } else {
-        alert('Phantom is not installed. Please install Phantom and try again.');
-      }
-    }
-
-    // Buy Now logic (Simulate sending Solana)
-    async function buyNow() {
-      const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('devnet'), 'confirmed');
-      const wallet = window.solana;
-
-      if (!wallet.publicKey) {
-        alert("Please connect your Phantom wallet.");
-        return;
-      }
-
-      const fromPubkey = wallet.publicKey;
-      const toPubkey = new solanaWeb3.PublicKey('2ymfWmDGtvqpTWhHFn2pxhDiTLpStphVFaJDnwjSMTsi'); // Your receiving address here
-      const lamports = solanaWeb3.LAMPORTS_PER_SOL; // 1 SOL in lamports
-
-      // Create the transaction
-      const transaction = new solanaWeb3.Transaction().add(
-        solanaWeb3.SystemProgram.transfer({
-          fromPubkey,
-
+        let seconds = Math.floor((remainingTime
+    
