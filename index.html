@@ -1,128 +1,84 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hawkeye Presale</title>
-  <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.32.0/dist/web3.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hawkeye Coin Presale</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Orbitron', sans-serif;
-      background-color: #000;
-      background-image: url('white-eagle.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
+      background-color: black;
       color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
+      font-family: Arial, sans-serif;
       text-align: center;
+      padding: 40px;
     }
-
-    .container {
-      background: rgba(0, 0, 0, 0.8);
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 0 20px white;
-      max-width: 500px;
-      width: 90%;
-    }
-
-    h1 {
-      font-size: 2em;
+    img {
+      width: 200px;
       margin-bottom: 20px;
-      color: white;
     }
-
-    .counter, .timer {
-      font-size: 1.2em;
-      margin: 10px 0;
-    }
-
-    .progress-bar-container {
-      width: 100%;
-      background-color: #222;
-      border-radius: 10px;
+    .progress-container {
+      width: 80%;
+      background-color: #333;
+      border-radius: 20px;
+      margin: 20px auto;
+      height: 30px;
       overflow: hidden;
-      margin: 15px 0;
     }
-
     .progress-bar {
-      height: 20px;
-      width: 55%;
+      height: 100%;
       background-color: white;
-      transition: width 0.5s ease-in-out;
+      width: 85%;
+      animation: grow 2s ease-out forwards;
     }
-
+    @keyframes grow {
+      from { width: 85%; }
+      to { width: 85%; }
+    }
     button {
-      font-size: 1em;
-      padding: 10px 20px;
-      margin: 10px;
-      border-radius: 10px;
-      border: none;
+      margin-top: 30px;
+      padding: 15px 30px;
+      font-size: 18px;
       background-color: white;
       color: black;
+      border: none;
+      border-radius: 10px;
       cursor: pointer;
-      transition: background 0.3s;
     }
-
     button:hover {
       background-color: #ccc;
     }
-
-    .wallet-link {
-      color: white;
-      text-decoration: underline;
+    .info {
+      margin-top: 20px;
+      font-size: 18px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>HAWKEYE PRESALE</h1>
-    <div class="timer" id="timer">Time Remaining: Loading...</div>
-    <div class="counter" id="counter">55% of tokens sold</div>
-    <div class="progress-bar-container">
-      <div id="progressBar" class="progress-bar"></div>
-    </div>
-    <a href="https://phantom.app/" target="_blank" class="wallet-link">Phantom Wallet verbinden</a><br>
-    <button onclick="buyNow()">1 SOL kaufen</button>
+  <img src="adler.png" alt="Hawkeye Logo">
+  <h1>Hawkeye Coin Presale</h1>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
   </div>
-
+  <p>85% der Presale-Ziele erreicht</p>
+  <button onclick="buyNow()">Jetzt kaufen mit Phantom Wallet</button>
+  <div class="info">
+    <p>Der Hawkeye Coin startet am <strong>1. Mai 2025</strong> und basiert vollständig auf der <strong>Solana Blockchain</strong>.</p>
+    <p>Die Zieladresse für den Presale ist: <code>2ymfWmDGtvqpTWhHFn2pxhDiTLpStphVFaJDnwjSMTsi</code></p>
+  </div>
   <script>
-    const presaleEnd = new Date("2025-05-01T00:00:00Z").getTime();
-    const counter = document.getElementById("counter");
-    const timer = document.getElementById("timer");
-    const progressBar = document.getElementById("progressBar");
-
-    function updateTimer() {
-      const now = Date.now();
-      const diff = presaleEnd - now;
-
-      if (diff <= 0) {
-        timer.innerText = "Presale Ended";
-        return;
-      }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-
-      timer.innerText = `Time Remaining: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
-
     function buyNow() {
-      window.open("https://explorer.solana.com/address/2ymfWmDGtvqpTWhHFn2pxhDiTLpStphVFaJDnwjSMTsi?cluster=mainnet", "_blank");
+      window.open("https://phantom.app/", "_blank");
     }
 
-    updateTimer();
-    setInterval(updateTimer, 1000);
+    const startDate = new Date("2025-04-19T00:00:00");
+    const today = new Date();
+    const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+    const progress = Math.min(85 + daysPassed * 2, 100);
+    document.getElementById("progressBar").style.width = progress + "%";
   </script>
 </body>
 </html>
