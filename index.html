@@ -4,53 +4,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hawkeye Coin Presale</title>
+  <title>Hawkeye Presale</title>
   <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.32.0/dist/web3.min.js"></script>
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: 'Orbitron', sans-serif;
-      background: url('hawkeye-bg.png') no-repeat center center fixed;
-      background-size: cover;
+      background-color: #000;
+      background-image: url('white-eagle.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
       color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      text-align: center;
     }
 
     .container {
-      text-align: center;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.8);
       padding: 30px;
       border-radius: 16px;
-      border: 2px solid #00ffe1;
-      box-shadow: 0 0 25px #00ffe1;
+      box-shadow: 0 0 20px white;
       max-width: 500px;
       width: 90%;
     }
 
     h1 {
-      color: #00ffe1;
       font-size: 2em;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
+      color: white;
     }
 
-    .counter {
-      font-size: 1.5em;
-      margin: 10px 0;
-    }
-
-    .timer {
+    .counter, .timer {
       font-size: 1.2em;
-      color: #ff4444;
+      margin: 10px 0;
     }
 
     .progress-bar-container {
       width: 100%;
-      background-color: #333;
+      background-color: #222;
       border-radius: 10px;
       overflow: hidden;
       margin: 15px 0;
@@ -58,54 +55,50 @@
 
     .progress-bar {
       height: 20px;
-      width: 0%;
-      background-color: #00ffe1;
+      width: 55%;
+      background-color: white;
       transition: width 0.5s ease-in-out;
     }
 
     button {
       font-size: 1em;
-      margin: 10px;
       padding: 10px 20px;
+      margin: 10px;
       border-radius: 10px;
       border: none;
-      background-color: #00ffe1;
+      background-color: white;
       color: black;
       cursor: pointer;
       transition: background 0.3s;
     }
 
     button:hover {
-      background-color: #00ccaa;
+      background-color: #ccc;
+    }
+
+    .wallet-link {
+      color: white;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>HAWKEYE COIN PRESALE</h1>
-    <div class="counter" id="counter">0 / 100 SOL Raised</div>
+    <h1>HAWKEYE PRESALE</h1>
+    <div class="timer" id="timer">Time Remaining: Loading...</div>
+    <div class="counter" id="counter">55% of tokens sold</div>
     <div class="progress-bar-container">
       <div id="progressBar" class="progress-bar"></div>
     </div>
-    <div class="timer" id="timer">Time Remaining: Loading...</div>
-    <button onclick="connectPhantom()">Phantom Wallet verbinden</button>
+    <a href="https://phantom.app/" target="_blank" class="wallet-link">Phantom Wallet verbinden</a><br>
     <button onclick="buyNow()">1 SOL kaufen</button>
   </div>
 
   <script>
-    let totalSolRaised = 0;
-    const goalSol = 100;
     const presaleEnd = new Date("2025-05-01T00:00:00Z").getTime();
-
-    const timer = document.getElementById("timer");
     const counter = document.getElementById("counter");
+    const timer = document.getElementById("timer");
     const progressBar = document.getElementById("progressBar");
-
-    function updateUI() {
-      counter.innerText = `${totalSolRaised} / ${goalSol} SOL Raised`;
-      const percent = Math.min((totalSolRaised / goalSol) * 100, 100);
-      progressBar.style.width = percent + "%";
-    }
 
     function updateTimer() {
       const now = Date.now();
@@ -124,74 +117,12 @@
       timer.innerText = `Time Remaining: ${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
+    function buyNow() {
+      window.open("https://explorer.solana.com/address/2ymfWmDGtvqpTWhHFn2pxhDiTLpStphVFaJDnwjSMTsi?cluster=mainnet", "_blank");
+    }
+
+    updateTimer();
     setInterval(updateTimer, 1000);
-    updateUI();
-
-    function isPhantomInstalled() {
-      return window.solana && window.solana.isPhantom;
-    }
-
-    async function connectPhantom() {
-      if (!isPhantomInstalled()) {
-        alert("Phantom Wallet ist nicht installiert. Bitte installiere sie über https://phantom.app");
-        return;
-      }
-
-      try {
-        const resp = await window.solana.connect({ onlyIfTrusted: false });
-        alert("Phantom verbunden: " + resp.publicKey.toString());
-      } catch (err) {
-        console.error("Fehler bei Wallet-Verbindung:", err);
-        alert("Verbindung abgebrochen oder fehlgeschlagen.");
-      }
-    }
-
-    async function buyNow() {
-      if (!window.solana || !window.solana.publicKey) {
-        alert("Bitte verbinde zuerst deine Phantom Wallet.");
-        return;
-      }
-
-      if (Date.now() > presaleEnd) {
-        alert("Presale ist beendet.");
-        return;
-      }
-
-      const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("mainnet-beta"));
-      const fromPubkey = window.solana.publicKey;
-      const toPubkey = new solanaWeb3.PublicKey("2ymfWmDGtvqpTWhHFn2pxhDiTLpStphVFaJDnwjSMTsi");
-
-      const transaction = new solanaWeb3.Transaction().add(
-        solanaWeb3.SystemProgram.transfer({
-          fromPubkey,
-          toPubkey,
-          lamports: solanaWeb3.LAMPORTS_PER_SOL
-        })
-      );
-
-      try {
-        const { signature } = await window.solana.signAndSendTransaction(transaction);
-        await connection.confirmTransaction(signature);
-        alert("Transaktion erfolgreich!");
-        totalSolRaised += 1;
-        updateUI();
-      } catch (err) {
-        console.error(err);
-        alert("Transaktion fehlgeschlagen!");
-      }
-    }
-
-    window.addEventListener("load", () => {
-      if (isPhantomInstalled()) {
-        window.solana.on("connect", () => {
-          console.log("Verbunden mit:", window.solana.publicKey.toString());
-        });
-
-        window.solana.on("disconnect", () => {
-          console.log("Wallet getrennt.");
-        });
-      }
-    });
   </script>
 </body>
 </html>
