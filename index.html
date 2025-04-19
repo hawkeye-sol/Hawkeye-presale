@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,4 +34,147 @@
 
     h1 {
       color: #00ffe1;
-      font
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    .counter {
+      font-size: 1.5em;
+      margin: 10px 0;
+    }
+
+    .timer {
+      font-size: 1.2em;
+      color: #ff4444;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      background-color: #333;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 15px 0;
+    }
+
+    .progress-bar {
+      height: 20px;
+      width: 0%;
+      background-color: #00ffe1;
+      transition: width 0.5s ease-in-out;
+    }
+
+    button {
+      font-size: 1em;
+      margin: 10px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      background-color: #00ffe1;
+      color: black;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #00ccaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>HAWKEYE COIN PRESALE</h1>
+    <div class="counter" id="counter">0 / 100 SOL Raised</div>
+    <div class="progress-bar-container">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+    <div class="timer" id="timer">Time Remaining: Loading...</div>
+    <button onclick="connectPhantom()">Connect Phantom</button>
+    <button onclick="buyNow()">Buy 1 SOL</button>
+  </div>
+
+  <script>
+    let totalSolRaised = 0;
+    const goalSol = 100;
+    const presaleEnd = new Date("2025-05-01T00:00:00Z").getTime();
+
+    const timer = document.getElementById("timer");
+    const counter = document.getElementById("counter");
+    const progressBar = document.getElementById("progressBar");
+
+    function updateUI() {
+      counter.innerText = `${totalSolRaised} / ${goalSol} SOL Raised`;
+      const percent = Math.min((totalSolRaised / goalSol) * 100, 100);
+      progressBar.style.width = percent + "%";
+    }
+
+    function updateTimer() {
+      const now = Date.now();
+      const diff = presaleEnd - now;
+
+      if (diff <= 0) {
+        timer.innerText = "Presale Ended";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      timer.innerText = `Time Remaining: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    setInterval(updateTimer, 1000);
+    updateUI();
+
+    async function connectPhantom() {
+      if (window.solana && window.solana.isPhantom) {
+        try {
+          const response = await window.solana.connect();
+          alert("Connected to Phantom: " + response.publicKey.toString());
+        } catch (err) {
+          console.error(err);
+          alert("Connection failed.");
+        }
+      } else {
+        alert("Phantom Wallet not found. Please install Phantom extension.");
+      }
+    }
+
+    async function buyNow() {
+      if (!window.solana || !window.solana.publicKey) {
+        alert("Please connect your Phantom Wallet first.");
+        return;
+      }
+
+      if (Date.now() > presaleEnd) {
+        alert("Presale is over.");
+        return;
+      }
+
+      const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("mainnet-beta"));
+      const fromPubkey = window.solana.publicKey;
+      const toPubkey = new solanaWeb3.PublicKey("2ymfWmDGtvqpTWhHFn2pxhDiTLpStphVFaJDnwjSMTsi");
+
+      const transaction = new solanaWeb3.Transaction().add(
+        solanaWeb3.SystemProgram.transfer({
+          fromPubkey,
+          toPubkey,
+          lamports: solanaWeb3.LAMPORTS_PER_SOL
+        })
+      );
+
+      try {
+        const signed = await window.solana.signAndSendTransaction(transaction);
+        await connection.confirmTransaction(signed.signature);
+        alert("Transaction successful!");
+        totalSolRaised += 1;
+        updateUI();
+      } catch (err) {
+        console.error(err);
+        alert("Transaction failed!");
+      }
+    }
+  </script>
+</body>
+</html>
