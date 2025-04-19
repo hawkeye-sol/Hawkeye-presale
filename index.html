@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hawkeye Coin Presale</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: white;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            margin: auto;
+        }
+        .counter {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .wallet {
+            font-size: 1.2em;
+            background: #111;
+            padding: 10px;
+            border-radius: 8px;
+            word-break: break-all;
+            margin: 20px 0;
+        }
+        button {
+            padding: 15px 25px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            background-color: #00ffae;
+            color: #000;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #00c98e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HAWKEYE COIN PRESALE</h1>
+        <p class="counter" id="counter">Loading tokens sold...</p>
+        <div class="wallet">Wallet: 2ymfWmDGtvqpTWhHFn2pxhDiTLpStphVFaJDnwjSMTsi</div>
+        <button onclick="buyNow()">BUY NOW</button>
+    </div>
+
+    <script>
+        let tokensSold = 0;
+        function updateCounter() {
+            document.getElementById("counter").innerText = tokensSold + " HAWK tokens sold";
+        }
+        function buyNow() {
+            window.open("https://explorer.solana.com/address/2ymfWmDGtvqpTWhHFn2pxhDiTLpStphVFaJDnwjSMTsi", "_blank");
+        }
+        setInterval(() => {
+            tokensSold += Math.floor(Math.random() * 20); // Simulierter Verkauf
+            updateCounter();
+        }, 3000);
+        updateCounter();
+    </script>
+</body>
+</html>
